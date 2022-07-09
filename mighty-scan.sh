@@ -36,12 +36,12 @@ box_blue "MIGHTY-SCAN"
 echo " "
 
 # Checking for root (or sudo) privileges.
-IsUbuntu=$(whoami)
-if [ $IsUbuntu != 'root' ]
+USER=$(whoami)
+if [ $USER != 'root' ]
 then
-  box_yellow "No root privileges - Advanced features disabled"
+  box_yellow "No root privileges - Disabled features that require raw packet analysis"
 else
-  box_green "Running with root privileges - Advanced features enabled"
+  box_green "Running with root privileges - All features available"
 fi
 
 # Creating output directory adn testing for writting access.
@@ -56,7 +56,7 @@ if [ ! -f $TARGET_FILE ]; then
     box_yellow "File not found: target.ips"
 
     # Prompt for target.
-    read -e -p "Enter, comma separated, the target addresses (e.g. 10.0.0.0/24,10.0.0.1): " TARGET
+    read -e -p "Enter, comma separated, the target addresses (e.g. 10.0.0.0/24,10.0.0.1,10.0.0.1-5): " TARGET
     [ -z "$TARGET" ] && box_red "FAILED - No target" && exit 0
 
     # Saving targets to file.
@@ -70,28 +70,69 @@ tput setaf 4
 cat $TARGET_FILE
 tput sgr0
 
-#
-# Discovery
-#
+##
+## Discovery Phase
+##
 
-box_green "Ping scan"
+box_green "Ping discovery"
 nmap -iL $TARGET_FILE -oG $OUTPUT_DIR/scan.ping -v0 -sn
 tput setaf 4
 cat $OUTPUT_DIR/scan.ping | grep 'seconds'
 tput sgr0
-cat $OUTPUT_DIR/scan.ping | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | uniq
+cat $OUTPUT_DIR/scan.ping | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | uniq | tee $OUTPUT_DIR/hosts.up
 
-box_green "No ping scan"
-nmap -iL $TARGET_FILE -oG $OUTPUT_DIR/scan.noping -v0 -Pn
-if [ $IsUbuntu != 'root' ]
+#
+# TCP Discovery
+#
+
+# Prompt for top ports.
+box_green "TCP discovery"
+read -e -p "Check top 1000 ports (y/N): " TCP
+if [ "$TCP" == "y" ] || [ "$TCP" == "Y" ]
 then
-  sed '/Status: Up/d' -i $OUTPUT_DIR/scan.noping
-  sed '/Ports: 	/d' -i $OUTPUT_DIR/scan.noping
+  nmap -iL $TARGET_FILE -oG $OUTPUT_DIR/scan.tcp -v0 -Pn
+  if [ $USER != 'root' ]
+  then
+    sed '/Status: Up/d' -i $OUTPUT_DIR/scan.tcp
+    sed '/Ports: 	/d' -i $OUTPUT_DIR/scan.tcp
+    echo "-------------"
+  fi
+  tput setaf 4
+  cat $OUTPUT_DIR/scan.tcp | grep 'seconds'
+  tput sgr0
+  cat $OUTPUT_DIR/scan.tcp | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | uniq | tee -a $OUTPUT_DIR/hosts.up
+  cat $OUTPUT_DIR/hosts.up | uniq | tee $OUTPUT_DIR/hosts.up > /dev/null
+else
+  box_yellow "SKIPPING"
 fi
-tput setaf 4
-cat $OUTPUT_DIR/scan.noping | grep 'seconds'
-tput sgr0
-cat $OUTPUT_DIR/scan.noping | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | uniq
+
+#
+# UDP Discovery
+#
+
+# Prompt for top ports.
+box_green "UDP discovery (very slow)"
+read -e -p "Check top 50 ports (y/N): " UDP
+if [ "$UDP" == "y" ] || [ "$UDP" == "Y" ] && [ $USER == 'root' ]
+then
+  nmap -iL $TARGET_FILE -oG $OUTPUT_DIR/scan.udp -v0 -Pn -sU --top-ports 5
+  tput setaf 4
+  cat $OUTPUT_DIR/scan.udp | grep 'seconds'
+  tput sgr0
+  cat $OUTPUT_DIR/scan.udp | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | uniq | tee -a $OUTPUT_DIR/hosts.up
+  cat $OUTPUT_DIR/hosts.up | uniq | tee $OUTPUT_DIR/hosts.up > /dev/null
+elif [ "$UDP" == "y" ] || [ "$UDP" == "Y" ] && [ $USER != 'root' ]
+then
+  box_red "SKIPPING - Root required"
+else
+  box_yellow "SKIPPING"
+fi
+
+##
+## Port Scan Phase
+##
+
+
 
 box_green "ENDED"
 exit 0
