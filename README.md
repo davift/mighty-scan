@@ -14,8 +14,8 @@ cd mighty-scan
 Optionally create a file with the target IPs/Networks in the scope.
 
 ```
-echo "192.168.1.0/24" > target.ips
-echo "192.168.2.1" >> target.ips
+echo "192.168.1.0/24" > ./scope/target.ips
+echo "192.168.2.1" >> ./scope/target.ips
 ```
 
 Then, execute the script with or without root privileges.
