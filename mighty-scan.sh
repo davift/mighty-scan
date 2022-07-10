@@ -103,7 +103,7 @@ fi
 
 read -e -p "Start fingerprinting the open ports (y/N): " IDENTIFY
 if [ "$IDENTIFY" == "y" ] || [ "$IDENTIFY" == "Y" ]; then
-  source identify.sh
+  source fingerprinting.sh
 else
   box_yellow "SKIPPING"
 fi
