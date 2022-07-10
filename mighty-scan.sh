@@ -36,8 +36,12 @@ if [ ! -f $TARGET_FILE ]; then
       cat /etc/hosts | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | sort | uniq | tee -a $OUTPUT_DIR/target.ips > /dev/null
       arp -a | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | sort | uniq | tee -a $OUTPUT_DIR/target.ips >> /dev/null
         if [ -f "`which arp-scan`" ] && [ $USER == 'root' ]; then
-          ## 
-          arp-scan --interface=eth0 --localnet | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | sort | uniq | tee -a $OUTPUT_DIR/target.ips >> /dev/null
+          ## To install: sudo apt install arp-scan -y
+          for ADAPTER in $(ip a | grep "state UP" | awk -F " " '{print $2}' |  sed 's/://')
+          do
+            echo $ADAPTER
+            arp-scan --interface=eth0 --localnet | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | sort | uniq | tee -a $OUTPUT_DIR/target.ips >> /dev/null
+          done
         fi
     else
       # Saving targets to file.
@@ -63,6 +67,8 @@ tput sgr0
 read -e -p "Discover reachable host (y/N): " DISCOVER
 if [ "$DISCOVER" == "y" ] || [ "$DISCOVER" == "Y" ]; then
   source discovery.sh
+else
+  box_yellow "SKIPPING"
 fi
 
 ##
@@ -78,6 +84,7 @@ elif [ "$SELECTED" == "y" ] || [ "$SELECTED" == "Y" ] && [ ! -f $OUTPUT_DIR/host
 else
   IPS=$OUTPUT_DIR/target.ips
 fi
+box_blue "Using $IPS"
 
 ##
 ## Port Scan Phase
@@ -86,15 +93,24 @@ fi
 read -e -p "Start port scan (y/N): " PORT_SCAN
 if [ "$PORT_SCAN" == "y" ] || [ "$PORT_SCAN" == "Y" ]; then
   source portscan.sh
+else
+  box_yellow "SKIPPING"
 fi
 
 ##
 ## Fingerprinting Phase
 ##
 
-read -e -p "Start fingerprinting (y/N): " IDENTIFY
+read -e -p "Start fingerprinting the open ports (y/N): " IDENTIFY
 if [ "$IDENTIFY" == "y" ] || [ "$IDENTIFY" == "Y" ]; then
   source identify.sh
+else
+  box_yellow "SKIPPING"
+fi
+
+# Changing ownership of output files
+if [ $USER == 'root' ]; then
+  chown -R $SUDO_USER: $OUTPUT_DIR
 fi
 
 # Terminating

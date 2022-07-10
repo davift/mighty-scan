@@ -5,7 +5,7 @@
 box_green "Ping discovery"
 nmap -iL $TARGET_FILE -oG $OUTPUT_DIR/scan.ping -v0 -sn
 tput setaf 4
-cat $OUTPUT_DIR/scan.ping | grep 'seconds'
+tail -n 1 $OUTPUT_DIR/scan.ping
 tput sgr0
 cat $OUTPUT_DIR/scan.ping | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | uniq | tee $OUTPUT_DIR/hosts.up
 
@@ -22,7 +22,7 @@ if [ "$TCP" == "y" ] || [ "$TCP" == "Y" ]; then
     sed '/Ports: 	/d' -i $OUTPUT_DIR/scan.tcp
   fi
   tput setaf 4
-  cat $OUTPUT_DIR/scan.tcp | grep 'seconds'
+  tail -n 1 $OUTPUT_DIR/scan.tcp
   tput sgr0
   cat $OUTPUT_DIR/scan.tcp | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | uniq | tee -a $OUTPUT_DIR/hosts.up
 else
@@ -38,7 +38,7 @@ read -e -p "Check top 10 ports (y/N): " UDP
 if [ "$UDP" == "y" ] || [ "$UDP" == "Y" ] && [ $USER == 'root' ]; then
   nmap -iL $TARGET_FILE -oG $OUTPUT_DIR/scan.udp -v0 -Pn -sU --top-ports 10
   tput setaf 4
-  cat $OUTPUT_DIR/scan.udp | grep 'seconds'
+  tail -n 1 $OUTPUT_DIR/scan.udp
   tput sgr0
   cat $OUTPUT_DIR/scan.udp | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | uniq | tee -a $OUTPUT_DIR/hosts.up
 elif [ "$UDP" == "y" ] || [ "$UDP" == "Y" ] && [ $USER != 'root' ]; then
