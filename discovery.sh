@@ -20,7 +20,6 @@ if [ "$TCP" == "y" ] || [ "$TCP" == "Y" ]; then
   if [ $USER != 'root' ]; then
     sed '/Status: Up/d' -i $OUTPUT_DIR/scan.tcp
     sed '/Ports: 	/d' -i $OUTPUT_DIR/scan.tcp
-    echo "-------------"
   fi
   tput setaf 4
   cat $OUTPUT_DIR/scan.tcp | grep 'seconds'

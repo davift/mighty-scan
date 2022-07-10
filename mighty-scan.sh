@@ -30,10 +30,23 @@ if [ ! -f $TARGET_FILE ]; then
 
     # Prompt for target.
     read -e -p "Enter, comma separated, the target addresses (e.g. 10.0.0.0/24,10.0.0.1,10.0.0.1-5): " TARGET
-    [ -z "$TARGET" ] && box_red "FAILED - No target" && exit 0
+    if [ -z "$TARGET" ]; then
+      box_yellow "No address entered"
+      box_green "Smart detection (arp scan + hosts file)"
+      cat /etc/hosts | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | sort | uniq | tee -a $OUTPUT_DIR/target.ips > /dev/null
+      arp -a | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | sort | uniq | tee -a $OUTPUT_DIR/target.ips >> /dev/null
+        if [ -f "`which arp-scan`" ] && [ $USER == 'root' ]; then
+          ## 
+          arp-scan --interface=eth0 --localnet | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | sort | uniq | tee -a $OUTPUT_DIR/target.ips >> /dev/null
+        fi
+    else
+      # Saving targets to file.
+      echo $TARGET | tr , "\n" > $TARGET_FILE
+    fi
+    # Deduplicating
+    cat $OUTPUT_DIR/target.ips | sort | uniq > $OUTPUT_DIR/target.ips.tmp
+    mv $OUTPUT_DIR/target.ips.tmp $OUTPUT_DIR/target.ips
 
-    # Saving targets to file.
-    echo $TARGET | tr , "\n" > $TARGET_FILE
 else
   box_green "Targets found"
 fi
@@ -73,6 +86,15 @@ fi
 read -e -p "Start port scan (y/N): " PORT_SCAN
 if [ "$PORT_SCAN" == "y" ] || [ "$PORT_SCAN" == "Y" ]; then
   source portscan.sh
+fi
+
+##
+## Fingerprinting Phase
+##
+
+read -e -p "Start fingerprinting (y/N): " IDENTIFY
+if [ "$IDENTIFY" == "y" ] || [ "$IDENTIFY" == "Y" ]; then
+  source identify.sh
 fi
 
 # Terminating
