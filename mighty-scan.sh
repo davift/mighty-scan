@@ -4,6 +4,7 @@
 # 2022-07-09 v0.1
 
 source boxes.sh
+SILENT='-v0'
 
 echo " "
 box_blue "MIGHTY-SCAN"
@@ -72,19 +73,16 @@ else
 fi
 
 ##
-## Select IPs
+## Selecting Targer IPs
 ##
 
-read -e -p "Use discovered hosts as targets (y/N): " SELECTED
-if [ "$SELECTED" == "y" ] || [ "$SELECTED" == "Y" ] && [ -f $OUTPUT_DIR/hosts.up ]; then
-  IPS=$OUTPUT_DIR/hosts.up
-elif [ "$SELECTED" == "y" ] || [ "$SELECTED" == "Y" ] && [ ! -f $OUTPUT_DIR/hosts.up ]; then
+if [ ! -f $OUTPUT_DIR/hosts.up ]; then
   box_red "NOT FOUND - $OUTPUT_DIR/hosts.up"
   IPS=$OUTPUT_DIR/target.ips
 else
-  IPS=$OUTPUT_DIR/target.ips
+  IPS=$OUTPUT_DIR/hosts.up
 fi
-box_blue "Using $IPS"
+box_blue "Targets in $IPS"
 
 ##
 ## Port Scan Phase
@@ -104,6 +102,17 @@ fi
 read -e -p "Start fingerprinting the open ports (y/N): " IDENTIFY
 if [ "$IDENTIFY" == "y" ] || [ "$IDENTIFY" == "Y" ]; then
   source fingerprinting.sh
+else
+  box_yellow "SKIPPING"
+fi
+
+##
+## Vulnerabilities Phase
+##
+
+read -e -p "Start vulnerability check (y/N): " VULN
+if [ "$VULN" == "y" ] || [ "$VULN" == "Y" ]; then
+  source vulnerability.sh
 else
   box_yellow "SKIPPING"
 fi

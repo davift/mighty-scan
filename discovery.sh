@@ -3,7 +3,7 @@
 ##
 
 box_green "Ping discovery"
-nmap -iL $TARGET_FILE -oG $OUTPUT_DIR/scan.ping -v0 -sn
+nmap -iL $TARGET_FILE -oG $OUTPUT_DIR/scan.ping $SILENT -sn
 tput setaf 4
 tail -n 1 $OUTPUT_DIR/scan.ping
 tput sgr0
@@ -16,7 +16,7 @@ cat $OUTPUT_DIR/scan.ping | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | uniq | 
 box_green "TCP discovery"
 read -e -p "Check top 1000 ports (y/N): " TCP
 if [ "$TCP" == "y" ] || [ "$TCP" == "Y" ]; then
-  nmap -iL $TARGET_FILE -oG $OUTPUT_DIR/scan.tcp -v0 -Pn
+  nmap -iL $TARGET_FILE -oG $OUTPUT_DIR/scan.tcp $SILENT -Pn
   if [ $USER != 'root' ]; then
     sed '/Status: Up/d' -i $OUTPUT_DIR/scan.tcp
     sed '/Ports: 	/d' -i $OUTPUT_DIR/scan.tcp
@@ -36,7 +36,7 @@ fi
 box_green "UDP discovery (very slow)"
 read -e -p "Check top 10 ports (y/N): " UDP
 if [ "$UDP" == "y" ] || [ "$UDP" == "Y" ] && [ $USER == 'root' ]; then
-  nmap -iL $TARGET_FILE -oG $OUTPUT_DIR/scan.udp -v0 -Pn -sU --top-ports 10
+  nmap -iL $TARGET_FILE -oG $OUTPUT_DIR/scan.udp -Pn $SILENT -sU --top-ports 10
   tput setaf 4
   tail -n 1 $OUTPUT_DIR/scan.udp
   tput sgr0

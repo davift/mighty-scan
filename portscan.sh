@@ -20,49 +20,49 @@ do
         "${options[0]}")
             allowAbort=false;
             box_green "Scanning Top 10..."
-            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn --top-ports 10 --open || box_red "...scan aborted!";
+            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn $SILENT --top-ports 10 --open || box_red "...scan aborted!";
             allowAbort=true;
-            box_green "If not enough try the option 2"
+            break
             ;;
         "${options[1]}")
             allowAbort=false;
             box_green "Scanning Top 50..."
-            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn --top-ports 50 --open || box_red "...scan aborted!";
+            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn $SILENT --top-ports 50 --open || box_red "...scan aborted!";
             allowAbort=true;
-            box_green "If not enough try the option 3"
+            break
             ;;
         "${options[2]}")
             allowAbort=false;
             box_green "Scanning Top 100..."
-            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn --top-ports 100 --open || box_red "...scan aborted!";
+            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn $SILENT --top-ports 100 --open || box_red "...scan aborted!";
             allowAbort=true;
-            box_green "If not enough try the option 4"
+            break
             ;;
         "${options[3]}")
             allowAbort=false;
             box_green "Scanning Top 500..."
-            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn --top-ports 500 --open || box_red "...scan aborted!";
+            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn $SILENT --top-ports 500 --open || box_red "...scan aborted!";
             allowAbort=true;
-            box_green "If not enough try the option 5"
+            break
             ;;
         "${options[4]}")
             allowAbort=false;
             box_green "Scanning Top 1000..."
-            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn --top-ports 1000 --open || box_red "...scan aborted!";
+            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn $SILENT --top-ports 1000 --open || box_red "...scan aborted!";
             allowAbort=true;
-            box_green "If not enough try the option 6"
+            break
             ;;
         "${options[5]}")
             allowAbort=false;
             box_green "Scanning Top 5000..."
-            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn --top-ports 5000 --open || box_red "...scan aborted!";
+            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn $SILENT --top-ports 5000 --open || box_red "...scan aborted!";
             allowAbort=true;
-            box_green "If not enough try the option 7"
+            break
             ;;
         "${options[6]}")
             allowAbort=false;
             box_green "Scanning all ports..."
-            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn -p- --open || box_red "...scan aborted!";
+            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn $SILENT -p- --open || box_red "...scan aborted!";
             allowAbort=true;
             box_green "Full scan completed"
             break

@@ -8,8 +8,8 @@ It tries to optimize the scanning time by following the steps:
 
 - Discover Hosts,
 - Check for Open Ports,
-- Look for Fingerprints and Vulnerabilities,
-- Enumeration.
+- Fingerprints and Enumeration,
+- Vulnerabilities and more Enumeration.
 
 ## Usage
 
