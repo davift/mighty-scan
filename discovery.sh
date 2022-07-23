@@ -10,7 +10,7 @@ tput sgr0
 cat $OUTPUT_DIR/scan.ping | grep -o -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | uniq | tee $OUTPUT_DIR/hosts.up
 
 #
-# TCP Discovery
+# TCP Discovery (bonus hint: --script discovery)
 #
 
 box_green "TCP discovery"

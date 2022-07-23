@@ -4,6 +4,13 @@ Mighty-Scan is a simple script that automates, guides, and properly documents ou
 
 There is nothing new about scanning here. It only reduces repetitive typing.
 
+It tries to optimize the scanning time by following the steps:
+
+- Discover Hosts,
+- Check for Open Ports,
+- Look for Fingerprints and Vulnerabilities,
+- Enumeration.
+
 ## Usage
 
 ```

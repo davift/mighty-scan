@@ -62,7 +62,7 @@ do
         "${options[6]}")
             allowAbort=false;
             box_green "Scanning all ports..."
-            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn -p- || box_red "...scan aborted!";
+            nmap -iL $IPS -oG $OUTPUT_DIR/port.open -oN $OUTPUT_DIR/port.nmap -Pn -p- --open || box_red "...scan aborted!";
             allowAbort=true;
             box_green "Full scan completed"
             break
