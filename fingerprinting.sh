@@ -53,9 +53,9 @@ if [ "$SCAN" == 'yes' ]; then
     echo "$HOST    $PORTS"
     tput sgr0
     if [ $USER != 'root' ]; then
-      nmap -oG $OUTPUT_DIR/fingerprint/$HOST.grep.1 -oN $OUTPUT_DIR/fingerprint/$HOST.nmap.1 -Pn $SILENT $SCAN_OPT1 $SCAN_OPT2 $SCAN_OPT4 $SCAN_SPEED -p$PORTS $HOST
+      nmap -oG $OUTPUT_DIR/fingerprint/$HOST.grep -oN $OUTPUT_DIR/fingerprint/$HOST.nmap -Pn $SILENT $SCAN_OPT1 $SCAN_OPT2 $SCAN_OPT4 $SCAN_SPEED -p$PORTS $HOST
     else
-      sudo nmap -oG $OUTPUT_DIR/fingerprint/$HOST.grep.1 -oN $OUTPUT_DIR/fingerprint/$HOST.nmap.1 -Pn $SILENT $SCAN_OPT1 $SCAN_OPT2 $SCAN_OPT3 $SCAN_OPT4 $SCAN_SPEED -p$PORTS $HOST
+      sudo nmap -oG $OUTPUT_DIR/fingerprint/$HOST.grep -oN $OUTPUT_DIR/fingerprint/$HOST.nmap -Pn $SILENT $SCAN_OPT1 $SCAN_OPT2 $SCAN_OPT3 $SCAN_OPT4 $SCAN_SPEED -p$PORTS $HOST
     fi
   done
 else
